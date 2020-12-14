@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar1;
     ProgressBar progressBar2;
     ProgressBar progressBar3;
+    ProgressThread pt1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +151,9 @@ public class MainActivity extends AppCompatActivity {
         playProcess1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "play 1", Toast.LENGTH_SHORT).show();
+               pt1=new ProgressThread(1,progressBar1);
+               pt1.start();
+
             }
         });
         playProcess2Btn.setOnClickListener(new View.OnClickListener() {
