@@ -42,6 +42,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 200;
     private boolean readGranted = false;
     private boolean writeGranted = false;
+    private Map<Integer, ProgressThread> mapOfThreads = new HashMap<>();
     String currentPhotoPath;//za sada samo objekat klase File ka ne kreiranom fileu
     ImageView imageView;
     Button cameraBtn;
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar1;
     ProgressBar progressBar2;
     ProgressBar progressBar3;
-    ProgressThread pt1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,24 +87,24 @@ public class MainActivity extends AppCompatActivity {
         galleryBtn = findViewById(R.id.galleryBtnID);
         saveBtn = findViewById(R.id.saveBtnID);
 
-        showImage1Btn=findViewById(R.id.showImageBtn1ID);
-        progressBar1=findViewById(R.id.progressBar1ID);
-        playProcess1Btn=findViewById(R.id.playProcessBtn1ID);
-        pauseProcess1Btn=findViewById(R.id.pauseProcessBtn1ID);
-        downloadImage1Btn=findViewById(R.id.downloadBtn1ID);
+        showImage1Btn = findViewById(R.id.showImageBtn1ID);
+        progressBar1 = findViewById(R.id.progressBar1ID);
+        playProcess1Btn = findViewById(R.id.playProcessBtn1ID);
+        pauseProcess1Btn = findViewById(R.id.pauseProcessBtn1ID);
+        downloadImage1Btn = findViewById(R.id.downloadBtn1ID);
 
-        showImage2Btn=findViewById(R.id.showImageBtn2ID);
-        progressBar2=findViewById(R.id.progressBar2ID);
-        playProcess2Btn=findViewById(R.id.playProcessBtn2ID);
-        pauseProcess2Btn=findViewById(R.id.pauseProcessBtn2ID);
-        downloadImage2Btn=findViewById(R.id.downloadBtn2ID);
+        showImage2Btn = findViewById(R.id.showImageBtn2ID);
+        progressBar2 = findViewById(R.id.progressBar2ID);
+        playProcess2Btn = findViewById(R.id.playProcessBtn2ID);
+        pauseProcess2Btn = findViewById(R.id.pauseProcessBtn2ID);
+        downloadImage2Btn = findViewById(R.id.downloadBtn2ID);
 
 
-        showImage3Btn=findViewById(R.id.showImageBtn3ID);
-        progressBar3=findViewById(R.id.progressBar3ID);
-        playProcess3Btn=findViewById(R.id.playProcessBtn3ID);
-        pauseProcess3Btn=findViewById(R.id.pauseProcessBtn3ID);
-        downloadImage3Btn=findViewById(R.id.downloadBtn3ID);
+        showImage3Btn = findViewById(R.id.showImageBtn3ID);
+        progressBar3 = findViewById(R.id.progressBar3ID);
+        playProcess3Btn = findViewById(R.id.playProcessBtn3ID);
+        pauseProcess3Btn = findViewById(R.id.pauseProcessBtn3ID);
+        downloadImage3Btn = findViewById(R.id.downloadBtn3ID);
 
         askPermissions();
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -136,55 +139,22 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "prikaz slike 1", Toast.LENGTH_SHORT).show();
             }
         });
-        showImage2Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "prikaz slike 2", Toast.LENGTH_SHORT).show();
-            }
-        });
-        showImage3Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "prikaz slike 3", Toast.LENGTH_SHORT).show();
-            }
-        });
         playProcess1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               pt1=new ProgressThread(1,progressBar1);
-               pt1.start();
 
-            }
-        });
-        playProcess2Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "play 2", Toast.LENGTH_SHORT).show();
-            }
-        });
-        playProcess3Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "play 3", Toast.LENGTH_SHORT).show();
+                playProcess(1,progressBar1);
+
             }
         });
         pauseProcess1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "pause 1", Toast.LENGTH_SHORT).show();
+                pauseProcess(1);
+
             }
-        });
-        pauseProcess2Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "pause 2", Toast.LENGTH_SHORT).show();
-            }
-        });
-        pauseProcess3Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "pause 3", Toast.LENGTH_SHORT).show();
-            }
+
+
         });
         downloadImage1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,10 +162,48 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "download 1", Toast.LENGTH_SHORT).show();
             }
         });
+
+        showImage2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "prikaz slike 2", Toast.LENGTH_SHORT).show();
+            }
+        });
+        playProcess2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playProcess(2,progressBar2);
+            }
+        });
+        pauseProcess2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseProcess(2);
+            }
+        });
         downloadImage2Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "download 2", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        showImage3Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "prikaz slike 3", Toast.LENGTH_SHORT).show();
+            }
+        });
+        playProcess3Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playProcess(3,progressBar3);
+            }
+        });
+        pauseProcess3Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               pauseProcess(3);
             }
         });
         downloadImage3Btn.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +213,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+
+    private void playProcess(int i,ProgressBar progressBar) {
+        ProgressThread progressThread =mapOfThreads.get(Integer.valueOf(i));
+        if (progressThread != null) {
+            if (progressThread.isRunning()) {
+                Toast.makeText(MainActivity.this, "Proces je u toku", Toast.LENGTH_SHORT).show();
+            } else {
+                synchronized (progressThread.getLockObject()) {
+                    progressThread.getLockObject().notify();
+                }
+            }
+
+        } else {
+            Object lockObject = new Object();
+            progressThread = new ProgressThread(i, progressBar, lockObject,MainActivity.this);
+            mapOfThreads.put(Integer.valueOf(i),progressThread);
+            progressThread.start();
+        }
+    }
+    private void pauseProcess(int i) {
+        ProgressThread progressThread =mapOfThreads.get(Integer.valueOf(i));
+        if (progressThread != null) {
+            if (!progressThread.isRunning())
+                Toast.makeText(MainActivity.this, "Proces je vec pauziran", Toast.LENGTH_SHORT).show();
+            else {
+
+                progressThread.setRunning(false);
+
+            }
+        }else{
+            Toast.makeText(MainActivity.this, "Proces nije ni pokrenut", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void askPermissions() {
@@ -285,9 +328,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (requestCode == GALLERY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri contentUri=data.getData();
+                Uri contentUri = data.getData();
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "."+getFilesExt(contentUri);
+                String imageFileName = "JPEG_" + timeStamp + "." + getFilesExt(contentUri);
                 Log.d("tag", "URL od izabrabe slike :" + imageFileName);
                 imageView.setImageURI(contentUri);
 
@@ -298,12 +341,13 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Metoda vraca ekstenziju slike
+     *
      * @param contentUri
      * @return
      */
     private String getFilesExt(Uri contentUri) {
-        ContentResolver c=getContentResolver();
-        MimeTypeMap mime=MimeTypeMap.getSingleton();
+        ContentResolver c = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(c.getType(contentUri));
 
     }
@@ -373,4 +417,5 @@ public class MainActivity extends AppCompatActivity {
         this.sendBroadcast(mediaScanIntent);
         Toast.makeText(this, "SLIKA POHRANJENA", Toast.LENGTH_SHORT).show();
     }
+
 }
