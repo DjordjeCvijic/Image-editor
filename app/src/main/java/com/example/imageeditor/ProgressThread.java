@@ -1,7 +1,10 @@
 package com.example.imageeditor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Looper;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -10,7 +13,7 @@ public class ProgressThread extends Thread{
     private int ID;
     private ProgressBar progressBar;
     private Context context;
-
+    private FilterService filterService;
     public Object getLockObject() {
         return lockObject;
     }
@@ -27,26 +30,27 @@ public class ProgressThread extends Thread{
 
 
 
-    public ProgressThread(int id,ProgressBar pb,Object lock,Context c){
+    public ProgressThread(int id, ProgressBar pb, Object lock, Context c, ImageView imageView){
         ID=id;
         progressBar=pb;
         lockObject=lock;
         context=c;
+        filterService=new FilterService(imageView);
     }
 
     public void run(){
 
         progressBar.setMax(100);
         progressBar.setProgress(0);
-
+        Bitmap finalImage=null;
         while(progressBar.getProgress()<=99){
             running=true;
-            progressBar.setProgress(progressBar.getProgress()+5);
+            finalImage=filterService.filter(ID);
             try{
                 sleep(1000);
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }progressBar.setProgress(progressBar.getProgress()+20);
             synchronized (lockObject){
                 if(!running) {
                     try {
@@ -60,6 +64,8 @@ public class ProgressThread extends Thread{
             }
 
         }
+        running=false;
+        MainActivity.mapOfEditImage.put(ID,finalImage);
 
         Looper.prepare();
         Toast.makeText(context,"Poces "+ID+" je zavrsen",Toast.LENGTH_SHORT).show();

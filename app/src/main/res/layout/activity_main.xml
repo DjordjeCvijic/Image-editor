@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/displayImageViewID"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -44,18 +44,7 @@
         app:layout_constraintTop_toTopOf="@+id/cameraBtnID"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/saveBtnID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="47dp"
-        android:text="Save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/cameraBtnID"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/cameraBtnID"
-        app:layout_constraintTop_toBottomOf="@+id/cameraBtnID"
-        app:layout_constraintVertical_bias="0.0" />
+
 
     <TextView
         android:id="@+id/textView"
@@ -82,7 +71,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/displayImageViewID"
-        app:layout_constraintVertical_bias="0.52">
+        app:layout_constraintVertical_bias="0.36">
 
         <ImageButton
             android:id="@+id/showImageBtn1ID"
