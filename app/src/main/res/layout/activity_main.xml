@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#03A9F4"
+    android:background="#ccd9cf"
     tools:context=".MainActivity">
 
 
@@ -18,41 +18,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@drawable/ic_launcher_background" />
+        tools:srcCompat="@drawable/ic_baseline_image_24" />
 
     <Button
         android:id="@+id/cameraBtnID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera"
+        android:text="@string/camera"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.177"
+        app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.454" />
+        app:layout_constraintVertical_bias="0.428" />
+
 
     <Button
         android:id="@+id/galleryBtnID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Gallery"
+        android:text="@string/gallery"
         app:layout_constraintBottom_toBottomOf="@+id/cameraBtnID"
         app:layout_constraintEnd_toEndOf="@+id/displayImageViewID"
-        app:layout_constraintHorizontal_bias="0.841"
+        app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toEndOf="@+id/cameraBtnID"
         app:layout_constraintTop_toTopOf="@+id/cameraBtnID"
         app:layout_constraintVertical_bias="0.0" />
 
-
-
     <TextView
         android:id="@+id/textView"
-        android:layout_width="107dp"
-        android:layout_height="26dp"
+        android:layout_width="160dp"
+        android:layout_height="27dp"
         android:layout_marginTop="34dp"
         android:gravity="center"
-        android:text="Izaberi sliku :"
+        android:text="@string/uploadImage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.052"
@@ -78,6 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="#00BCD4"
             app:srcCompat="@drawable/ic_show_image" />
 
         <ProgressBar
@@ -92,21 +92,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_play_process" />
+            app:srcCompat="@drawable/ic_play_process"
+            android:backgroundTint="#00BCD4"/>
 
         <ImageButton
             android:id="@+id/pauseProcessBtn1ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_pause_process" />
+            app:srcCompat="@drawable/ic_pause_process"
+            android:backgroundTint="#00BCD4"/>/>
 
         <ImageButton
-            android:id="@+id/downloadBtn1ID"
+            android:id="@+id/saveBtn1ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_download_image" />
+            app:srcCompat="@drawable/ic_download_image"
+            android:backgroundTint="#00BCD4"/>/>
     </LinearLayout>
 
     <LinearLayout
@@ -126,6 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="#00BCD4"
             app:srcCompat="@drawable/ic_show_image" />
 
         <ProgressBar
@@ -140,21 +144,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_play_process" />
+            app:srcCompat="@drawable/ic_play_process"
+            android:backgroundTint="#00BCD4"/>
 
         <ImageButton
             android:id="@+id/pauseProcessBtn2ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_pause_process" />
+            app:srcCompat="@drawable/ic_pause_process"
+            android:backgroundTint="#00BCD4"/>
 
         <ImageButton
-            android:id="@+id/downloadBtn2ID"
+            android:id="@+id/saveBtn2ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_download_image" />
+            app:srcCompat="@drawable/ic_download_image"
+            android:backgroundTint="#00BCD4"/>
     </LinearLayout>
 
     <LinearLayout
@@ -173,6 +180,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="#00BCD4"
             app:srcCompat="@drawable/ic_show_image" />
 
         <ProgressBar
@@ -187,21 +195,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_play_process" />
+            app:srcCompat="@drawable/ic_play_process"
+            android:backgroundTint="#00BCD4"/>
 
         <ImageButton
             android:id="@+id/pauseProcessBtn3ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_pause_process" />
+            app:srcCompat="@drawable/ic_pause_process"
+            android:backgroundTint="#00BCD4"/>
 
         <ImageButton
-            android:id="@+id/downloadBtn3ID"
+            android:id="@+id/saveBtn3ID"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_download_image" />
+            app:srcCompat="@drawable/ic_download_image"
+            android:backgroundTint="#00BCD4"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

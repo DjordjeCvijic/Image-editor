@@ -2,7 +2,6 @@ package com.example.imageeditor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -18,7 +17,7 @@ public class ProgressThread extends Thread{
         return lockObject;
     }
 
-    private Object lockObject;
+    private final Object lockObject;
     private boolean running=false;
     public boolean isRunning() {
         return running;
@@ -47,16 +46,14 @@ public class ProgressThread extends Thread{
             running=true;
             finalImage=filterService.filter(ID);
             try{
-                sleep(1000);
+                sleep(500);
             }catch (Exception e){
                 e.printStackTrace();
-            }progressBar.setProgress(progressBar.getProgress()+20);
+            }progressBar.setProgress(progressBar.getProgress()+5);
             synchronized (lockObject){
                 if(!running) {
                     try {
-                        System.out.println("*****************STOP "+ID);
                         lockObject.wait();
-                        System.out.println("***********START "+ID);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -68,10 +65,9 @@ public class ProgressThread extends Thread{
         MainActivity.mapOfEditImage.put(ID,finalImage);
 
         Looper.prepare();
-        Toast.makeText(context,"Poces "+ID+" je zavrsen",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Process "+ID+" is done",Toast.LENGTH_SHORT).show();
         Looper.loop();
 
     }
-    public int getID(){return ID;}
 
 }

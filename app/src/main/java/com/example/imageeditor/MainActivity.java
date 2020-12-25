@@ -2,39 +2,28 @@ package com.example.imageeditor;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,8 +31,6 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,23 +50,25 @@ public class MainActivity extends AppCompatActivity {
     private boolean originalImageExists = false;
     private Map<Integer, ProgressThread> mapOfThreads = new HashMap<>();
     public static Map<Integer, Bitmap> mapOfEditImage = new HashMap<>();
-    String currentPhotoPath;//za sada samo objekat klase File ka ne kreiranom fileu
-    ImageView originalImage;
-    Button cameraBtn;
-    Button galleryBtn;
-    ImageButton showImage1Btn, playProcess1Btn, pauseProcess1Btn, downloadImage1Btn;
-    ImageButton showImage2Btn, playProcess2Btn, pauseProcess2Btn, downloadImage2Btn;
-    ImageButton showImage3Btn, playProcess3Btn, pauseProcess3Btn, downloadImage3Btn;
+    private String currentPhotoPath;
+    private ImageView originalImage;
 
-    ProgressBar progressBar1;
-    ProgressBar progressBar2;
-    ProgressBar progressBar3;
+
+    private ProgressBar progressBar1;
+    private ProgressBar progressBar2;
+    private ProgressBar progressBar3;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageButton showImage1Btn, playProcess1Btn, pauseProcess1Btn, saveImage1Btn;
+        ImageButton showImage2Btn, playProcess2Btn, pauseProcess2Btn, saveImage2Btn;
+        ImageButton showImage3Btn, playProcess3Btn, pauseProcess3Btn, saveImage3Btn;
+        Button cameraBtn;
+        Button galleryBtn;
+        
         originalImage = findViewById(R.id.displayImageViewID);
         cameraBtn = findViewById(R.id.cameraBtnID);
         galleryBtn = findViewById(R.id.galleryBtnID);
@@ -89,20 +78,20 @@ public class MainActivity extends AppCompatActivity {
         progressBar1 = findViewById(R.id.progressBar1ID);
         playProcess1Btn = findViewById(R.id.playProcessBtn1ID);
         pauseProcess1Btn = findViewById(R.id.pauseProcessBtn1ID);
-        downloadImage1Btn = findViewById(R.id.downloadBtn1ID);
+        saveImage1Btn = findViewById(R.id.saveBtn1ID);
 
         showImage2Btn = findViewById(R.id.showImageBtn2ID);
         progressBar2 = findViewById(R.id.progressBar2ID);
         playProcess2Btn = findViewById(R.id.playProcessBtn2ID);
         pauseProcess2Btn = findViewById(R.id.pauseProcessBtn2ID);
-        downloadImage2Btn = findViewById(R.id.downloadBtn2ID);
+        saveImage2Btn = findViewById(R.id.saveBtn2ID);
 
 
         showImage3Btn = findViewById(R.id.showImageBtn3ID);
         progressBar3 = findViewById(R.id.progressBar3ID);
         playProcess3Btn = findViewById(R.id.playProcessBtn3ID);
         pauseProcess3Btn = findViewById(R.id.pauseProcessBtn3ID);
-        downloadImage3Btn = findViewById(R.id.downloadBtn3ID);
+        saveImage3Btn = findViewById(R.id.saveBtn3ID);
 
         askPermissions();
         cameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clearGUI();
                 askCameraPermissions();
-//                dispatchTakePictureIntent();
             }
         });
 
@@ -119,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clearGUI();
                 askReadPermissions();
-
-
             }
         });
 
@@ -148,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         });
-        downloadImage1Btn.setOnClickListener(new View.OnClickListener() {
+        saveImage1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               askWritePermissions(1);
+                askWritePermissions(1);
             }
         });
 
@@ -173,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 pauseProcess(2);
             }
         });
-        downloadImage2Btn.setOnClickListener(new View.OnClickListener() {
+        saveImage2Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 askWritePermissions(2);
@@ -198,10 +184,10 @@ public class MainActivity extends AppCompatActivity {
                 pauseProcess(3);
             }
         });
-        downloadImage3Btn.setOnClickListener(new View.OnClickListener() {
+        saveImage3Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               askWritePermissions(3);
+                askWritePermissions(3);
             }
         });
 
@@ -225,17 +211,17 @@ public class MainActivity extends AppCompatActivity {
 
 
         } else {
-            Toast.makeText(this, "Filtriranje nije obavljeno", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Process of editing not done", Toast.LENGTH_SHORT).show();
 
         }
     }
 
 
     private void playProcess(int i, ProgressBar progressBar) {
-        ProgressThread progressThread = mapOfThreads.get(Integer.valueOf(i));
+        ProgressThread progressThread = mapOfThreads.get(i);
         if (progressThread != null) {
             if (progressThread.isRunning()) {
-                Toast.makeText(MainActivity.this, "Proces je u toku", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Process of editing is already in the process", Toast.LENGTH_SHORT).show();
             } else {
                 synchronized (progressThread.getLockObject()) {
                     progressThread.getLockObject().notify();
@@ -246,27 +232,27 @@ public class MainActivity extends AppCompatActivity {
             if (originalImageExists) {
                 Object lockObject = new Object();
                 progressThread = new ProgressThread(i, progressBar, lockObject, MainActivity.this, originalImage);
-                mapOfThreads.put(Integer.valueOf(i), progressThread);
+                mapOfThreads.put(i, progressThread);
                 progressThread.start();
             } else {
-                Toast.makeText(MainActivity.this, "Slika za obradu nije izabrana", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Image for editing is not selected", Toast.LENGTH_SHORT).show();
             }
 
         }
     }
 
     private void pauseProcess(int i) {
-        ProgressThread progressThread = mapOfThreads.get(Integer.valueOf(i));
+        ProgressThread progressThread = mapOfThreads.get(i);
         if (progressThread != null) {
             if (!progressThread.isRunning())
-                Toast.makeText(MainActivity.this, "Proces je vec pauziran", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Process of editing is already paused", Toast.LENGTH_SHORT).show();
             else {
 
                 progressThread.setRunning(false);
 
             }
         } else {
-            Toast.makeText(MainActivity.this, "Proces nije ni pokrenut", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Process of editing is not started", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -293,16 +279,14 @@ public class MainActivity extends AppCompatActivity {
         String[] permission = {Manifest.permission.CAMERA};
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), permission[0]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, permission, CAMERA_PERM_CODE);
-        }
-        else dispatchTakePictureIntent();
+        } else dispatchTakePictureIntent();
     }
 
     private void askReadPermissions() {
         String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), permission[0]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, permission, READ_PERM_CODE);
-        }
-        else {
+        } else {
             Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(gallery, GALLERY_REQUEST_CODE);
         }
@@ -312,73 +296,46 @@ public class MainActivity extends AppCompatActivity {
         String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), permission[0]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, permission, WRITE_PERM_CODE);
-        }
-        else saveImageInGallery(i);
+        } else saveImageInGallery(i);
     }
 
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
 
-        if (requestCode == ALL_PERM_CODE) {
-
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
-                Toast.makeText(this, "Mora biti dozvoljeno citanje", Toast.LENGTH_SHORT).show();
-            }
-            if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-
-                Toast.makeText(this, "Mora biti dozvoljeno  poisanje", Toast.LENGTH_SHORT).show();
-            }
-            if (grantResults[2] != PackageManager.PERMISSION_GRANTED) {
-
-                Toast.makeText(this, "Mora biti dozvoljeno koristenje kamera", Toast.LENGTH_SHORT).show();
-            }
-
-        }
         if (requestCode == CAMERA_PERM_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Mora biti dozvoljeno koristenje kamera", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(this, "koristenje kamere dozvljeno", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera access required", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Camera access allowed", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == READ_PERM_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Mora biti dozvoljeno citanje", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(this, "citanje iz meorije dozvoljeno", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Storage access required", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Storage access allowed", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == WRITE_PERM_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Mora biti dozvoljeno pisanje", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(this, "pisanje u memoriju dozvoljeno", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Storage access required", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Storage access allowed", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
-    /**
-     * metoda koja se poziva ako se odobri slika
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {//metoda koja se poziva ako se odobri slika
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
                 originalImage.setImageURI(Uri.fromFile(f));
                 originalImageExists = true;
-                Log.d("tag", "URL od uslikane slike :" + Uri.fromFile(f));
+
 
             }
 
@@ -386,66 +343,38 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == GALLERY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri contentUri = data.getData();
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "." + getFilesExt(contentUri);
-                Log.d("tag", "URL od izabrabe slike :" + imageFileName);
                 originalImage.setImageURI(contentUri);
                 originalImageExists = true;
-
-
             }
 
         }
     }
 
-    /**
-     * Metoda vraca ekstenziju slike
-     *
-     * @param contentUri
-     * @return
-     */
-    private String getFilesExt(Uri contentUri) {
-        ContentResolver c = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(c.getType(contentUri));
 
-    }
-
-    /**
-     * Metoda koja pravi objekat klase File gdje ce se pohraniti slika
-     *
-     * @return
-     * @throws IOException
-     */
-    private File createImageFile() {//pravi objekat klase File koji upucuje na adresu na file sistemu
-        // Create an image file name
+    private File createImageFile() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);//ovu je prvo korisito
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File image = null;
         try {
             image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
+                    imageFileName,
+                    ".jpg",
+                    storageDir
             );
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
     private void dispatchTakePictureIntent() {
-        //sada cu provjeriti permisije za upis/ispis
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
@@ -453,21 +382,16 @@ public class MainActivity extends AppCompatActivity {
                 ex.printStackTrace();
 
             }
-            // Continue only if the File was successfully created
-
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);//ako sam dobro razumio,nakon sto odobrim uslikano stavi ju na taj url
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
             }
         }
     }
 
-    /**
-     * Metoda koja sacuvava ucitanu sliku u galeriju
-     */
     private void saveImageInGallery(int index) {
         Bitmap image = mapOfEditImage.get(index);
         if (image != null) {
@@ -475,9 +399,9 @@ public class MainActivity extends AppCompatActivity {
             Uri contentUri = getImageUri(MainActivity.this, image);
             mediaScanIntent.setData(contentUri);
             this.sendBroadcast(mediaScanIntent);
-            Toast.makeText(this, "SLIKA POHRANJENA", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Selected image saved", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Editovanje nije odradjeno", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Process of editing not done", Toast.LENGTH_SHORT).show();
         }
 
     }
